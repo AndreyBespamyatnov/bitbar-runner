@@ -1,0 +1,157 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "5786FCB0-8D53-4FD0-9548-A490C643D538",
+    "name": "bitbar-runner",
+    "friendlyName": "BitBar runner",
+    "description": "",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "Surgent",
+    "version": {
+        "Major": 0,
+        "Minor": 0,
+        "Patch": 1
+    },
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [
+        "npm",
+        "node.js"
+    ],
+    "instanceNameFormat": "BitBar runner",
+    "inputs": [
+        {
+            "name": "taskType",
+            "type": "radio",
+            "label": "Task Type",
+            "defaultValue": "run",
+            "required": true,
+            "options": {
+                "run": "Run",
+                "upload": "Upload"
+            },
+            "helpMarkDown": "`Run` will upload app file and ziped test project and then run automated UI Test, `Upload` will only upload the app file"
+        },
+        {
+            "name": "apiKey",
+            "type": "string",
+            "label": "BitBar Api Key",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "taskType=run || taskType=upload"
+        },
+        {
+            "name": "testRunName",
+            "type": "string",
+            "label": "Test Run Name",
+            "defaultValue": "Created from Azure DevOps",
+            "required": true,
+            "helpMarkDown": "The name that will be used on BitBar's dashboard when it creates a new test run.",
+            "visibleRule": "taskType=run || taskType=upload"
+        },
+        {
+            "name": "testsFilePath",
+            "type": "filePath",
+            "label": "Test file to run tests",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "File path to run tests. ex: `./UITests.dll`",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "appFilePath",
+            "type": "filePath",
+            "label": "App File path to be uploaded and run on the device",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "All iOS tests need a test build .ipa while Android tests require an .apk file.",
+            "visibleRule": "taskType=run || taskType=upload"
+        },
+        {
+            "name": "testArchiveName",
+            "type": "string",
+            "label": "Test Archive Name to upload to BitBar",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "A zipped package containing the tests and a run-tests.sh script to start the test execution. Default value: 'tests.zip'",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "deviceGroupId",
+            "type": "string",
+            "label": "Device Group Id",
+            "defaultValue": "",
+            "helpMarkDown": "The id of the device group",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "deviceIds",
+            "type": "string",
+            "label": "Device Id",
+            "defaultValue": "",
+            "helpMarkDown": "Comma separeted list of device ids",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "accessGroupIds",
+            "type": "string",
+            "label": "Access Group id's",
+            "defaultValue": "933",
+            "required": false,
+            "helpMarkDown": "Comma separated BitBar's Access Group id's to which your app file will shared to. Leave empty if you would not like to share the app file visible to others",
+            "visibleRule": "taskType=upload"
+        },
+        {
+            "name": "defaultOutput",
+            "type": "string",
+            "label": "Default Output path",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Path to the output artifacts. Default value: './dist'",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "projectId",
+            "type": "string",
+            "label": "BitBar ProjectId",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "BitBar project ID",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "testsRunParams",
+            "type": "string",
+            "label": "Tests Run command Params",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Examples: `--filter iOS` or `--filter Android`",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "environmentVariables",
+            "type": "string",
+            "label": "Environment variables",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Examples: `UITEST_USER_PREFIX=demouser,SOME_PARAM=1`",
+            "visibleRule": "taskType=run"
+        },
+        {
+            "name": "osType",
+            "type": "string",
+            "label": "OS Type",
+            "defaultValue": "IOS",
+            "required": false,
+            "helpMarkDown": "IOS or ANDROID",
+            "visibleRule": "taskType=run"
+        }
+    ],
+    "execution": {
+        "Node10": {
+            "target": "index.js"
+        }
+    }
+}

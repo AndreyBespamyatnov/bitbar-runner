@@ -1,0 +1,55 @@
+{
+    "manifestVersion": 1,
+    "id": "bitbar-runner-vsts-extension",
+    "version": "0.0.1",
+    "name": "BitBar runner",
+    "description": "Tools for Automated UI tests with BitBar.",
+    "publisher": "AndreiBespamiatnov",
+    "public": false,
+    "icons": {
+        "default": "icon.png"
+    },
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "content": {
+      "details": {
+        "path": "README.md"
+      }
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/AndreyBespamyatnov/bitbar-runner"
+    },
+    "tags": [
+        "webpack",
+        "build",
+        "module",
+        "bundler",
+        "javascript",
+        "typescript",
+        "BitBar"
+    ],
+    "files": [
+        {
+            "path": "tasks/bitbar-runner-task"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "bitbar-runner",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "tasks/bitbar-runner-task"
+            }
+        }
+    ]
+}

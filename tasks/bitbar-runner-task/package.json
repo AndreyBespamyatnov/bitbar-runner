@@ -1,0 +1,16 @@
+{
+  "name": "bitbar-runner-task",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "",
+  "description": "BitBar runner task for Visual Studio Team System (VSTS)",
+  "dependencies": {
+    "@bitbar/cloud-api-client": "^0.47.0",
+    "archiver": "^5.3.0",
+    "axios": "^0.21.1",
+    "azure-pipelines-task-lib": "^3.1.8"
+  },
+  "devDependencies": {}
+}

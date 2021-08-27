@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch via npm",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "debug"
+            ],
+            "env": {
+                "NODE_ENV": "development",
+                "INPUT_taskType": "upload",
+                "BUILD_SOURCESDIRECTORY": "C:\\agents\\latest\\_work\\21\\s",
+                "INPUT_apiKey": "API_KEY",
+                "INPUT_defaultOutput": "../../dist-task",
+                "INPUT_accessGroupIds": "933",
+                "INPUT_appFilePath": "../../artifacts/app/studycompanion.ipa",
+                "INPUT_testRunName": "Created from Azure DevOps",
+                "INPUT_testsFilePath": "../../artifacts/uitests/Knowfully.Examreview.StudyCompanion.UITests.dll",
+                "INPUT_projectId": "207073494",
+                "INPUT_testsRunParams": "--filter iOS",
+                "INPUT_environmentVariables": "UITEST_USER_PREFIX=74289511eb1",
+                "INPUT_deviceIds": "11334",
+                "INPUT_osType": "IOS",
+                // "INPUT_deviceGroupId": "45573",
+            },
+        }
+    ]
+}
