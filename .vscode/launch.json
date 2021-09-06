@@ -15,20 +15,29 @@
             ],
             "env": {
                 "NODE_ENV": "development",
-                "INPUT_taskType": "upload",
+                "INPUT_taskType": "run",
                 "BUILD_SOURCESDIRECTORY": "C:\\agents\\latest\\_work\\21\\s",
                 "INPUT_apiKey": "API_KEY",
                 "INPUT_defaultOutput": "../../dist-task",
                 "INPUT_accessGroupIds": "933",
-                "INPUT_appFilePath": "../../artifacts/app/studycompanion.ipa",
                 "INPUT_testRunName": "Created from Azure DevOps",
                 "INPUT_testsFilePath": "../../artifacts/uitests/Knowfully.Examreview.StudyCompanion.UITests.dll",
-                "INPUT_projectId": "207073494",
-                "INPUT_testsRunParams": "--filter iOS",
                 "INPUT_environmentVariables": "UITEST_USER_PREFIX=74289511eb1",
-                "INPUT_deviceIds": "11334",
-                "INPUT_osType": "IOS",
                 // "INPUT_deviceGroupId": "45573",
+                // #Android start
+                "INPUT_appFilePath": "../../artifacts/app/studycompanion.apk",
+                "INPUT_projectId": "207075103",
+                "INPUT_testsRunParams": "--filter Android",
+                "INPUT_deviceIds": "49732",
+                "INPUT_osType": "ANDROID",
+                // #Android end
+                // #iOS start
+                //"INPUT_appFilePath": "../../artifacts/app/studycompanion.ipa",
+                //"INPUT_projectId": "207073494",
+                //"INPUT_testsRunParams": "--filter iOS",
+                //"INPUT_deviceIds": "11334",
+                //"INPUT_osType": "IOS",
+                // #iOS end
             },
         }
     ]

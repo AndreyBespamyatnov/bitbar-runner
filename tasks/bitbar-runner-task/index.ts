@@ -72,7 +72,6 @@ export class BBClient {
         }
         catch (ex) {
             this.processError(ex);
-            throw ex;
         }
     }
 
@@ -177,8 +176,7 @@ export class BBClient {
                     id: filesResult[1].id,
                     action: "INSTALL",
                 }
-            ],
-            projectName: 'Project created with JS API Client'
+            ]
         } as any;
 
         if (this.deviceGroupId) {
@@ -212,14 +210,18 @@ export class BBClient {
                     keepRunCount++;
                 }
             }
-
-            console.log('Execution done. Clean-up')
-            for (const file of filesResult) {
-                await this.deleteFile(file.id);
-            }
         } catch (ex: any) {
             this.processError(ex);
             throw ex;
+        }
+
+        console.log('Execution done. Clean-up')
+        for (const file of filesResult) {
+            try {
+                await this.deleteFile(file.id);
+            } catch (ex) {
+                this.processError(ex);
+            }
         }
     }
 
@@ -286,7 +288,7 @@ export class BBClient {
         return files;
     }
 
-    private createRunTestScript(testFileName: string): string {
+    private createRunTestScript(testFileName: string, archiveName: string): string {
         // file run-tests.sh.template will be created or overwritten by default.
         try {
             let variablesStr = ''
@@ -298,6 +300,7 @@ export class BBClient {
             }
 
             const result = this.getTestRunScript()
+                .replace(/{{ARCHIVE_NAME}}/g, archiveName)
                 .replace(/{{TEST_FILE}}/g, testFileName)
                 .replace(/{{ENVIRONMENT_VARIABLES_PLACE}}/g, variablesStr)
                 .replace(/{{NUNIT_RUN_PARAMS}}/g, this.testsRunParams || '')
@@ -331,7 +334,7 @@ export class BBClient {
 
         // append the run.sh file from string
         // build run script
-        const runTestShContent = this.createRunTestScript(testFileName!);
+        const runTestShContent = this.createRunTestScript(testFileName, archiveName);
         archive.append(runTestShContent, { name: 'run-tests.sh' });
 
         // append files from a directory, putting its contents at the root of archive
@@ -391,6 +394,7 @@ export class BBClient {
             }).send();
             this.verifySendResult(uploadResult);
 
+            console.log(`Uploading file: '${filePath}' done with Id: ${uploadResult.data.id} and Size: ${uploadResult.data.size}`);
             return uploadResult.data.id;
         } catch (ex) {
             this.processError(ex);
@@ -449,61 +453,50 @@ export class BBClient {
     private getTestRunScript(): string {
         return `
 #!/bin/bash
-# Name of the test file
-TEST=\${TEST:="{{TEST_FILE}}"}
-##### Cloud testrun dependencies start
-echo "Extracting tests.zip..."
-unzip tests.zip
-#########################################################
-#
-# Intalling dotnet
-#
-#########################################################
+
+TEST=\${TEST:="{{TEST_FILE}}"} # Name of the test file
+
+##### Intalling dotnet
 curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel LTS
-#########################################################
-#
-# Preparing to start Appium
-# - UDID is the device ID on which test will run and
-#   required parameter on iOS test runs
-# - appium - is a wrapper tha calls the latest installed
-#   Appium server. Additional parameters can be passed
-#   to the server here.
-#
-#########################################################
-echo "Setting UDID..."
-echo "UDID set to \${IOS_UDID}"
-echo "Starting Appium ..."
-appium -U \${IOS_UDID}  --log-no-colors --log-timestamp --command-timeout 120
-ps -ef|grep appium
-##### Cloud testrun dependencies end.
-
-## Clean local screenshots directory
-rm -rf screenshots
-
-## Start test execution
-echo "Running test \${TEST}"
-{{ENVIRONMENT_VARIABLES_PLACE}}
-/Users/testdroid/.dotnet/dotnet test --logger:"junit;LogFilePath=test-result.xml" \${TEST} {{NUNIT_RUN_PARAMS}}
-
-#########################################################
-#
-# Get test report
-# - do any test result post processing your test results
-#   need here
-# - also any additional files can be retrieved here
-# - retrieve files from device
-#########################################################
-mv test-result.xml TEST-all.xml
-
-# Make sure there's no pre-existing screenshots file blocking symbolic link creation
-rm -rf screenshots
-
-# Screenshots need to be available at root as directory screenshots.
-mkdir screenshots
-cp -Rf *.png screenshots
-
 ls -lrt
 
+##### Environment variables setup
+{{ENVIRONMENT_VARIABLES_PLACE}}
+
+echo "Starting Appium ..."
+appium --log-no-colors --log-timestamp
+##### Cloud testrun dependencies end.
+
+echo "Extracting tests.zip..."
+unzip -o tests.zip
+
+##### Run the test:
+echo $PWD
+ls -lrt
+echo "Running test \${TEST}"
+{{ENVIRONMENT_VARIABLES_PLACE}}
+
+if [ -d "/root/.dotnet" ] 
+then
+    echo "Directory /root/.dotnet exists." 
+    /root/.dotnet/dotnet test --logger:"junit;LogFilePath=test-result.xml" \${TEST} {{NUNIT_RUN_PARAMS}}
+fi
+
+if [ -d "/Users/testdroid/.dotnet" ] 
+then
+    echo "Directory /Users/testdroid/.dotnet exists." 
+    /Users/testdroid/.dotnet/dotnet test --logger:"junit;LogFilePath=test-result.xml" \${TEST} {{NUNIT_RUN_PARAMS}}
+fi
+
+##### Post-processing
+mv test-result.xml TEST-all.xml
+
+##### Make sure there's no pre-existing screenshots file blocking
+rm -rf screenshots
+
+##### Screenshots need to be available at root as directory screenshots.
+mkdir screenshots
+cp -Rf *.png screenshots
 `;
     }
 }
